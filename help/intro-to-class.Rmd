@@ -232,17 +232,6 @@ class: inverse, center, middle
 ---
 #  Hoy vimos...
 
-- ☑ Unir bases de datos
+- ☑ [Data viz](#dataviz)
 
-    - ☑ Agregar variables (columnas)
- 
-    - ☑ Agregar observaciones (filas)
-
-- ☑ Pivotear bases de datos
-
-    - ☑ wide-long 
-    
-    - ☑ long-wide
-
-- ☑ Collapsar base de datos
-
+- ☑ [ggplot2](#ggplot)

@@ -234,14 +234,14 @@ geom_smooth(method=lm, se=F) + theme_light()
 
 ```r
 ### Como jpeg
-ggsave(plot= h_gdp , file = "results/GDP.jpeg")
+ggsave(plot= h_gdp , file = "views/GDP.jpeg")
 
 ### Como PNG
-ggsave(plot= h_gdp , file = "results/GDP 2.png", width = 7, height = 5)
+ggsave(plot= h_gdp , file = "views/GDP 2.png", width = 7, height = 5)
 
 ### Como PDF
 h_gdp
-ggsave(file = "results/GDP 3.pdf") # Si no le indicamos el plot a exportar, exportara el ultimo que este en el visor
+ggsave(file = "views/GDP 3.pdf") # Si no le indicamos el plot a exportar, exportara el ultimo que este en el visor
 ```
 
 &lt;!---------------------&gt;
@@ -256,20 +256,9 @@ class: inverse, center, middle
 ---
 #  Hoy vimos...
 
-- ☑ Unir bases de datos
+- ☑ [Data viz](#dataviz)
 
-    - ☑ Agregar variables (columnas)
- 
-    - ☑ Agregar observaciones (filas)
-
-- ☑ Pivotear bases de datos
-
-    - ☑ wide-long 
-    
-    - ☑ long-wide
-
-- ☑ Collapsar base de datos
-
+- ☑ [ggplot2](#ggplot)
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
