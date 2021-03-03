@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Taller de R: Estadística y programación</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Eduard Martinez" />
+    <script src="libs/header-attrs/header-attrs.js"></script>
+    <link href="libs/remark-css/fc.css" rel="stylesheet" />
+    <link href="libs/remark-css/default.css" rel="stylesheet" />
+    <link href="libs/remark-css/default-fonts.css" rel="stylesheet" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Taller de R: Estadística y programación
+## Lectura 6: Visualizar información
+### Eduard Martinez
+### Universidad de los Andes | <a href="https://github.com/taller-R">ECON-1302</a>
+
+---
+
+
+
+
+# Ya vimos
+
+1. [Unir bases de datos](#merge)
+ 
+    1.1. Agregar variables (columnas)
+ 
+    1.2. Agregar observaciones (filas)
+
+2. [Pivotear bases de datos](#reshape)
+
+    2.1. wide-long 
+    
+    2.2. long-wide
+
+3. [Collapsar base de datos](#group)
+
+--
+
+# Hoy veremos 
+
+1. [Data viz](#dataviz)
+
+2. [ggplot2](#ggplot)
+
+&lt;!-------------------------------&gt;
+&lt;!--- Pivotear bases de datos ---&gt;
+&lt;!-------------------------------&gt;
+---
+class: inverse, center, middle
+name: datavitz
+# Data to viz
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#FF007F' size=1px width=796px&gt;&lt;/html&gt;
+
+---
+# ¿Cómo elegir el tipo gráfico?
+
+&lt;div align="center"&gt;
+&lt;img src="pics/type.jpeg" height=450&gt;
+&lt;/div&gt;
+Ir a este enlace: [https://www.data-to-viz.com](https://www.data-to-viz.com/index.html)
+
+
+&lt;!-------------------------------&gt;
+&lt;!--- ggplot2 ---&gt;
+&lt;!---------------&gt;
+---
+class: inverse, center, middle
+name: ggplot
+# ggplot2
+
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#FF007F' size=1px width=796px&gt;&lt;/html&gt;
+
+Es la librería más usada en la visualización de información en R. `ggplot` aporta una gran variedad de gráficos. En [R graph gallery](https://www.r-graph-gallery.com) o [Data to viz](https://www.data-to-viz.com/index.html) podemos encontrar ayuda para implementar diferentes tipos de gráficos usando esta líbreria.
+
+---
+# ggplot2
+
+## argumentos
+
+
+```r
+data: base de datos
+aes: se definen las características del gráfico (que se grafica en cada eje, los colores por grupo, etc.)
+fill: Color con el que se rellena el elemento
+colour: Color del borde del elemento
+size: tamaño.
+shape: indica la forma de los puntos (cuadrados, triángulos, etc.)
+alpha: transparencia del color (entre 0 y 1)
+```
+
+## aes()
+
+
+```r
+x, y: valores a graficar en cada eje.
+group: variable con la que se define el grupo de los elementos.
+fill: variable con la que se define el color a rellenar usando las categorías de la variable.
+colour: variable con la que se define el color del borde usando las categorías de la variable.
+```
+
+---
+# Sintaxis
+
+Para hacer un gráfico usando `ggplot()`, generalmente se escribe `ggplot() + tipo_grafico()` donde `tipo_grafico()` es la función que usamos para pintar nuestros graficos. 
+
+
+```r
+ggplot() + geom_point() # gráfico de dispersión
+
+ggplot() + geom_histogram # histograma
+
+ggplot() + geom_bar() # gráfico de barras
+
+ggplot() + geom_line() # gráfico de lineas
+
+ggplot() + geom_sf() # mapas
+```
+
+--
+
+# Agregar atributos
+
+Además se pueden agregar atributos con la función `+`  
+
+
+```r
+ggplot() + geom_point() + ggtitle("Title") # title del gráfico
+
+ggplot() + geom_point() + ggtitle("Title")  + 
+ylab('Frecuencia') + xlab('Ingresos') # labels de los ejes
+```
+
+---
+# Veamos un ejemplo (...)
+
+
+```r
+p_load(tidyverse,viridis,forcats,gapminder)
+gapminder # base de datos mundial
+```
+
+```
+## # A tibble: 1,704 x 6
+##    country     continent  year lifeExp      pop gdpPercap
+##    &lt;fct&gt;       &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
+##  1 Afghanistan Asia       1952    28.8  8425333      779.
+##  2 Afghanistan Asia       1957    30.3  9240934      821.
+##  3 Afghanistan Asia       1962    32.0 10267083      853.
+##  4 Afghanistan Asia       1967    34.0 11537966      836.
+##  5 Afghanistan Asia       1972    36.1 13079460      740.
+##  6 Afghanistan Asia       1977    38.4 14880372      786.
+##  7 Afghanistan Asia       1982    39.9 12881816      978.
+##  8 Afghanistan Asia       1987    40.8 13867957      852.
+##  9 Afghanistan Asia       1992    41.7 16317921      649.
+## 10 Afghanistan Asia       1997    41.8 22227415      635.
+## # … with 1,694 more rows
+```
+
+---
+# Veamos un ejemplo (...)
+
+Histograma del ingreso percapita
+
+
+```r
+ggplot() + geom_histogram(data = gapminder, aes(x=gdpPercap)) # Ingreso
+```
+
+&lt;img src="intro-to-class_files/figure-html/unnamed-chunk-6-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+---
+# Veamos un ejemplo (...)
+
+Vamos a agregar los atributos 
+
+
+```r
+h_gdp = ggplot() + geom_histogram(data = gapminder, aes(x=gdpPercap)) + 
+        labs(title = "GDP percapita", caption = "Fuente: GapMinder",
+        x = "GDP",y = "Frecuencia")
+
+h_gdp # Veamos el grafico
+```
+
+&lt;img src="intro-to-class_files/figure-html/unnamed-chunk-7-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+---
+# Configurando el tema de mi gráfico
+
+Podemos configurar varios de los atributos de un gráfico desde el `theme()`. Sin embargo, existen varios temas prederteminados [aquí](https://ggplot2.tidyverse.org/reference/ggtheme.html). De igual forma podemos modificar cualquier argumento de la funcion `theme()`. Podemos ver todos los argumentos [aquí](https://ggplot2.tidyverse.org/reference/theme.html)
+
+
+```r
+h_gdp + theme_bw()
+```
+
+&lt;img src="intro-to-class_files/figure-html/unnamed-chunk-8-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Gráficos por grupos
+
+```r
+ggplot() + 
+geom_point(data = gapminder, 
+           aes(x=gdpPercap,y=lifeExp,colour=continent),alpha=0.5) +
+theme_light()  # esta ultima opción ajusta los ejes
+```
+
+&lt;img src="intro-to-class_files/figure-html/unnamed-chunk-9-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+
+---
+# Combinación de gráficos (...)
+
+
+```r
+ggplot(data = gapminder %&gt;% subset(year==2007), aes(x=gdpPercap,y=lifeExp,colour=continent)) + 
+geom_point(alpha=0.5) +
+geom_smooth(method=lm, se=F) + theme_light() 
+```
+
+&lt;img src="intro-to-class_files/figure-html/unnamed-chunk-10-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+---
+# exportar gráficos
+
+
+```r
+### Como jpeg
+ggsave(plot= h_gdp , file = "results/GDP.jpeg")
+
+### Como PNG
+ggsave(plot= h_gdp , file = "results/GDP 2.png", width = 7, height = 5)
+
+### Como PDF
+h_gdp
+ggsave(file = "results/GDP 3.pdf") # Si no le indicamos el plot a exportar, exportara el ultimo que este en el visor
+```
+
+&lt;!---------------------&gt;
+&lt;!---    Hoy vimos  ---&gt;
+&lt;!---------------------&gt;
+---
+class: inverse, center, middle
+
+# Hoy vimos...
+&lt;html&gt;&lt;div style='float:left'&gt;&lt;/div&gt;&lt;hr color='#FF007F' size=1px width=796px&gt;&lt;/html&gt;
+
+---
+#  Hoy vimos...
+
+- ☑ Unir bases de datos
+
+    - ☑ Agregar variables (columnas)
+ 
+    - ☑ Agregar observaciones (filas)
+
+- ☑ Pivotear bases de datos
+
+    - ☑ wide-long 
+    
+    - ☑ long-wide
+
+- ☑ Collapsar base de datos
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

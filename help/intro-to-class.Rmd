@@ -1,0 +1,248 @@
+---
+title: "Taller de R: Estadística y programación"
+subtitle: "Lectura 6: Visualizar información"
+author: "Eduard Martinez"
+date: "Universidad de los Andes | [ECON-1302](https://github.com/taller-R)"
+output: 
+  xaringan::moon_reader:
+    css: [fc , default , default-fonts] 
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+library(pacman)
+pacman::p_load(here,knitr,tidyverse,viridis,forcats)
+
+options(htmltools.dir.version = FALSE)
+opts_chunk$set(
+  fig.align="center",  
+  fig.height=4, #fig.width=6, out.width="748px", out.length="520.75px",
+  dpi=300, #fig.path='Figs/',
+  cache=T#, echo=F, warning=F, message=F
+  )
+
+# bases de datos a usar como ejemplo
+A = data.frame(id=c(1201,1202,1203,1204,1205),
+               name=c("Ariel", "Beto","Juan","Pedro","Sofi"),
+                age=c(15,20,30,40,50))
+
+B = data.frame(id=c(1201,1202,1203,1206,1207),
+               name=c("Ariel", "Beto","Juan","Lili","Vane"),
+                wage=c(1000,1500,2000,2500,3000))
+```
+
+# Ya vimos
+
+1. [Unir bases de datos](#merge)
+ 
+    1.1. Agregar variables (columnas)
+ 
+    1.2. Agregar observaciones (filas)
+
+2. [Pivotear bases de datos](#reshape)
+
+    2.1. wide-long 
+    
+    2.2. long-wide
+
+3. [Collapsar base de datos](#group)
+
+--
+
+# Hoy veremos 
+
+1. [Data viz](#dataviz)
+
+2. [ggplot2](#ggplot)
+
+<!------------------------------->
+<!--- Pivotear bases de datos --->
+<!------------------------------->
+---
+class: inverse, center, middle
+name: datavitz
+# Data to viz
+
+<html><div style='float:left'></div><hr color='#FF007F' size=1px width=796px></html>
+
+---
+# ¿Cómo elegir el tipo gráfico?
+
+<div align="center">
+<img src="pics/type.jpeg" height=450>
+</div>
+Ir a este enlace: [https://www.data-to-viz.com](https://www.data-to-viz.com/index.html)
+
+
+<!------------------------------->
+<!--- ggplot2 --->
+<!--------------->
+---
+class: inverse, center, middle
+name: ggplot
+# ggplot2
+
+<html><div style='float:left'></div><hr color='#FF007F' size=1px width=796px></html>
+
+Es la librería más usada en la visualización de información en R. `ggplot` aporta una gran variedad de gráficos. En [R graph gallery](https://www.r-graph-gallery.com) o [Data to viz](https://www.data-to-viz.com/index.html) podemos encontrar ayuda para implementar diferentes tipos de gráficos usando esta líbreria.
+
+---
+# ggplot2
+
+## argumentos
+
+```{r,eval=F,include=T}
+data: base de datos
+aes: se definen las características del gráfico (que se grafica en cada eje, los colores por grupo, etc.)
+fill: Color con el que se rellena el elemento
+colour: Color del borde del elemento
+size: tamaño.
+shape: indica la forma de los puntos (cuadrados, triángulos, etc.)
+alpha: transparencia del color (entre 0 y 1)
+```
+
+## aes()
+
+```{r,eval=F,include=T}
+x, y: valores a graficar en cada eje.
+group: variable con la que se define el grupo de los elementos.
+fill: variable con la que se define el color a rellenar usando las categorías de la variable.
+colour: variable con la que se define el color del borde usando las categorías de la variable.
+```
+
+---
+# Sintaxis
+
+Para hacer un gráfico usando `ggplot()`, generalmente se escribe `ggplot() + tipo_grafico()` donde `tipo_grafico()` es la función que usamos para pintar nuestros graficos. 
+
+```{r,eval=F,include=T}
+ggplot() + geom_point() # gráfico de dispersión
+
+ggplot() + geom_histogram # histograma
+
+ggplot() + geom_bar() # gráfico de barras
+
+ggplot() + geom_line() # gráfico de lineas
+
+ggplot() + geom_sf() # mapas
+```
+
+--
+
+# Agregar atributos
+
+Además se pueden agregar atributos con la función `+`  
+
+```{r,eval=F,include=T}
+ggplot() + geom_point() + ggtitle("Title") # title del gráfico
+
+ggplot() + geom_point() + ggtitle("Title")  + 
+ylab('Frecuencia') + xlab('Ingresos') # labels de los ejes
+
+```
+
+---
+# Veamos un ejemplo (...)
+
+```{r,eval=T,include=T,warning=F,message=F}
+p_load(tidyverse,viridis,forcats,gapminder)
+gapminder # base de datos mundial
+```
+
+---
+# Veamos un ejemplo (...)
+
+Histograma del ingreso percapita
+
+```{r,eval=T,include=T,warning=F,message=F,out.width = '80%'}
+ggplot() + geom_histogram(data = gapminder, aes(x=gdpPercap)) # Ingreso
+```
+
+---
+# Veamos un ejemplo (...)
+
+Vamos a agregar los atributos 
+
+```{r,eval=T,include=T,warning=F,message=F,out.width = '80%'}
+h_gdp = ggplot() + geom_histogram(data = gapminder, aes(x=gdpPercap)) + 
+        labs(title = "GDP percapita", caption = "Fuente: GapMinder",
+        x = "GDP",y = "Frecuencia")
+
+h_gdp # Veamos el grafico
+```
+
+---
+# Configurando el tema de mi gráfico
+
+Podemos configurar varios de los atributos de un gráfico desde el `theme()`. Sin embargo, existen varios temas prederteminados [aquí](https://ggplot2.tidyverse.org/reference/ggtheme.html). De igual forma podemos modificar cualquier argumento de la funcion `theme()`. Podemos ver todos los argumentos [aquí](https://ggplot2.tidyverse.org/reference/theme.html)
+
+```{r,eval=T,include=T,warning=F,message=F,out.width = '80%'}
+h_gdp + theme_bw()
+```
+
+
+---
+# Gráficos por grupos
+```{r,eval=T,include=T,warning=F,message=F,out.width = '80%'}
+ggplot() + 
+geom_point(data = gapminder, 
+           aes(x=gdpPercap,y=lifeExp,colour=continent),alpha=0.5) +
+theme_light()  # esta ultima opción ajusta los ejes
+```
+
+
+---
+# Combinación de gráficos (...)
+
+```{r,eval=T,include=T,warning=F,message=F,out.width = '80%'}
+ggplot(data = gapminder %>% subset(year==2007), aes(x=gdpPercap,y=lifeExp,colour=continent)) + 
+geom_point(alpha=0.5) +
+geom_smooth(method=lm, se=F) + theme_light() 
+```
+
+---
+# exportar gráficos
+
+```{r,eval=F,include=T,warning=F,message=F}
+
+### Como jpeg
+ggsave(plot= h_gdp , file = "views/GDP.jpeg")
+
+### Como PNG
+ggsave(plot= h_gdp , file = "views/GDP 2.png", width = 7, height = 5)
+
+### Como PDF
+h_gdp
+ggsave(file = "views/GDP 3.pdf") # Si no le indicamos el plot a exportar, exportara el ultimo que este en el visor
+```
+
+<!--------------------->
+<!---    Hoy vimos  --->
+<!--------------------->
+---
+class: inverse, center, middle
+
+# Hoy vimos...
+<html><div style='float:left'></div><hr color='#FF007F' size=1px width=796px></html>
+
+---
+#  Hoy vimos...
+
+- ☑ Unir bases de datos
+
+    - ☑ Agregar variables (columnas)
+ 
+    - ☑ Agregar observaciones (filas)
+
+- ☑ Pivotear bases de datos
+
+    - ☑ wide-long 
+    
+    - ☑ long-wide
+
+- ☑ Collapsar base de datos
+
